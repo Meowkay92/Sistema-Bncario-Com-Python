@@ -138,6 +138,13 @@ def criar_conta_corrente(usuarios, contas, cpf, agencia, numero_conta, limite=50
     return nova_conta
 
 
+def listar_contas(contas):
+    print("\n===== Contas Disponíveis =====")
+    for conta in contas:
+        print(f"Agência: {conta.agencia} | Número: {conta.numero} | Cliente: {conta.cliente.nome}")
+    print("==============================")
+
+
 def main():
     usuarios = []
     contas = []
@@ -151,6 +158,7 @@ def main():
         [d] Depositar
         [s] Sacar
         [e] Exibir Extrato
+        [lc] Listar Contas
         [q] Sair
         => """
 
@@ -165,11 +173,13 @@ def main():
 
         elif opcao == "nc":
             cpf = input("Informe o CPF do usuário: ")
-            criar_conta_corrente(usuarios, contas, cpf, agencia, numero_conta)
-            numero_conta += 1  # Incrementa o número da conta para a próxima
+            nova_conta = criar_conta_corrente(usuarios, contas, cpf, agencia, numero_conta)
+            if nova_conta:
+                numero_conta += 1  # Incrementa o número da conta para a próxima
 
         elif opcao == "d":
-            numero_conta_input = int(input("Informe o número da conta: "))
+            listar_contas(contas)
+            numero_conta_input = int(input("Informe o número da conta para depósito: "))
             valor = float(input("Informe o valor do depósito: "))
             conta = next((conta for conta in contas if conta.numero == numero_conta_input), None)
             if conta:
@@ -178,7 +188,8 @@ def main():
                 print("Conta não encontrada.")
 
         elif opcao == "s":
-            numero_conta_input = int(input("Informe o número da conta: "))
+            listar_contas(contas)
+            numero_conta_input = int(input("Informe o número da conta para saque: "))
             valor = float(input("Informe o valor do saque: "))
             conta = next((conta for conta in contas if conta.numero == numero_conta_input), None)
             if conta:
@@ -187,12 +198,16 @@ def main():
                 print("Conta não encontrada.")
 
         elif opcao == "e":
-            numero_conta_input = int(input("Informe o número da conta: "))
+            listar_contas(contas)
+            numero_conta_input = int(input("Informe o número da conta para exibir o extrato: "))
             conta = next((conta for conta in contas if conta.numero == numero_conta_input), None)
             if conta:
                 conta.exibir_extrato()
             else:
                 print("Conta não encontrada.")
+
+        elif opcao == "lc":
+            listar_contas(contas)
 
         elif opcao == "q":
             print("Saindo do sistema.")
